@@ -62,7 +62,3 @@ def guest_commands(cmd):
     commend_instructions = cmd[1:] if len(cmd) > 1 else None
     command_func = command_dict.get(cmd[0], error)
     return command_func(commend_instructions)
-
-cle = input("clearance: ")
-msg = input("msg: ")
-execute_command(msg, cle)

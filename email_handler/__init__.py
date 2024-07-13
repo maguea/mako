@@ -1,1 +1,1 @@
-__all__ = ["imap", "smtp"]
+__all__ = ["mako_imap", "mako_smtp"]

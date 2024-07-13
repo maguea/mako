@@ -17,12 +17,3 @@ def add_event(event_dict, name, month, day, year, hour, min, duration):
 def request_event(event_dict, name, month, day, year, hour, min, duration):
     if(hour < 11):
         return "error"
-
-meeting = event("meeting", 7, 12, 2024, 15, 20, 2)
-
-nottime = True
-while(nottime):
-    now = datetime.now()
-    if(now.hour == meeting.event_hour and now.minute == meeting.event_min ):
-        print("Meeting time")
-        nottime = False
