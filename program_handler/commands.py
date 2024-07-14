@@ -1,10 +1,11 @@
 
+
 def execute_command(msg, user):
     msg.lower()
     cmd = msg.split()
     if cmd[0] == "help":
         print("Help")
-    if user == "admin":
+    if user.clearance == 0:
         confirmation = admin_commands(cmd)
     else:
         confirmation = guest_commands(cmd)
