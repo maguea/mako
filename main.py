@@ -2,7 +2,7 @@
 # Matthew 4:4 "Man shall not live by bread alone, but by every word from God's mouth"
 from datetime import datetime
 
-#mine
+# My functions
 from program_handler import *
 from email_handler import*
 
@@ -45,6 +45,7 @@ def main():
         while(t):
             msg = poll(mako) #pass credentials to run program if valid
             if msg:
+                print("Incoming")
                 for sender in msg.keys():
                     mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", msg[sender])
     return   
