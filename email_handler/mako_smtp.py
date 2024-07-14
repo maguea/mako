@@ -19,7 +19,7 @@ def send_response(reciever_address, return_address, mako, cmdrsp, msg):
     rsp['From'] = reciever_address
     rsp['To'] = return_address
     rsp['Subject'] = cmdrsp
-    rsp.set_content(msg[0])
+    rsp.set_content(msg)
     ssl_context = ssl.create_default_context()
     mako.smtp.sendmail(reciever_address, return_address, rsp.as_string())
     sleep(1)

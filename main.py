@@ -15,6 +15,7 @@ class mako_values:
         self.reciever_app_key = app_key
         self.contacts = {}
         self.admin_pnum = admin_pnum
+        self.events = {}
 
 def main():
     # Get initial values
@@ -39,15 +40,17 @@ def main():
     imap = mako_imap.reciever_check(receiver_imap_server, receiver_email, receiver_pass)
     smtp = mako_smtp.sender_check(receiver_smpt_server, 587, receiver_email, receiver_pass)
 
-    if imap and smtp:
-        mako = mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum)
-        t = True
-        while(t):
-            msg = poll(mako) #pass credentials to run program if valid
-            if msg:
-                for sender in msg.keys():
-                    mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", msg[sender])
-    return   
+    if not imap or not smtp:
+        return  
+    mako = mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum)
+    t = True
+    while(t):
+        msg = poll(mako) #pass credentials to run program if valid
+        if msg:
+            for sender in msg.keys():
+                command = commands.execute_command(msg[sender], sender[12:23], mako)
+                print(response)
+                #mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", response)
 
 def poll(mako):
     mako.imap.select("Inbox")
