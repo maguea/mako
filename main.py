@@ -35,10 +35,12 @@ def main():
     #mako.contacts = { admin_pnum: admin_contact }
 
     #create event list
+    schedule = {}
+    schedule[2024] = events.initialize_year(2024)
 
     # Login using given credentials
     imap = mako_imap.reciever_check(receiver_imap_server, receiver_email, receiver_pass)
-    smtp = mako_smtp.sender_check(receiver_smpt_server, 587, receiver_email, receiver_pass)
+    smtp = mako_smtp.sender_check(receiver_smpt_server, 587, receiver_email, receiver_pass, schedule)
 
     if not imap or not smtp:
         return  
@@ -49,7 +51,7 @@ def main():
         if msg:
             for sender in msg.keys():
                 command = commands.execute_command(msg[sender], sender[12:23], mako)
-                print(response)
+                print(command)
                 #mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", response)
 
 def poll(mako):
