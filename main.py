@@ -1,13 +1,14 @@
-#main
+# Main.py
 # Matthew 4:4 "Man shall not live by bread alone, but by every word from God's mouth"
+
 from datetime import datetime
 
-#mine
+# My libraries
 from program_handler import *
 from email_handler import*
 
 class mako_values:
-    def __init__(self, log_imap, log_smtp, pnum, email, app_key, admin_pnum):
+    def __init__(self, log_imap, log_smtp, pnum, email, app_key, admin_pnum, schedule):
         self.imap = log_imap
         self.smtp = log_smtp
         self.receiver_pnum = pnum
@@ -15,9 +16,23 @@ class mako_values:
         self.reciever_app_key = app_key
         self.contacts = {}
         self.admin_pnum = admin_pnum
-        self.events = {}
+        self.events = schedule
+        self.month = datetime.now().month 
+        self.day = datetime.now().day      
+        self.year = datetime.now().year
 
 def main():
+    mako = mako_input_init()
+    t = True
+    while(t):
+        msg = poll(mako) #pass credentials to run program if valid
+        if msg:
+            for sender in msg.keys():
+                command = commands.execute_command(msg[sender], sender[12:23], mako)
+                print(command)
+                mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", command)
+
+def mako_input_init():
     # Get initial values
     admin_pnum = input("Enter admin phone number: ")
     #admin_name = input("Enter admin first and last name: ")
@@ -29,30 +44,18 @@ def main():
     receiver_email = input("Enter receiver email address: ")
     receiver_pass = input("Enter receiver app key: ")
 
-    # Create admin credintials
-    #admin_names = admin_name.split()
-    #admin_contact = contacts.contact(admin_names[0], admin_names[1], admin_pnum, admin_address, 0)
-    #mako.contacts = { admin_pnum: admin_contact }
-
     #create event list
     schedule = {}
     schedule[2024] = events.initialize_year(2024)
+    print(schedule[2024][int(1)])
 
     # Login using given credentials
     imap = mako_imap.reciever_check(receiver_imap_server, receiver_email, receiver_pass)
-    smtp = mako_smtp.sender_check(receiver_smpt_server, 587, receiver_email, receiver_pass, schedule)
+    smtp = mako_smtp.sender_check(receiver_smpt_server, 587, receiver_email, receiver_pass)
 
     if not imap or not smtp:
         return  
-    mako = mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum)
-    t = True
-    while(t):
-        msg = poll(mako) #pass credentials to run program if valid
-        if msg:
-            for sender in msg.keys():
-                command = commands.execute_command(msg[sender], sender[12:23], mako)
-                print(command)
-                #mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", response)
+    return mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum, schedule)
 
 def poll(mako):
     mako.imap.select("Inbox")
