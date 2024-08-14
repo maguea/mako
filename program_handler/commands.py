@@ -1,24 +1,64 @@
 # Commands.py
+from enum import Enum
+from email_handler import mako_smtp
 
-def new_number(reciver_number, address):
-    if address[0:11] != reciver_number:
-        #delete message
-        return
+class clearance(Enum):
+    admin = 0
+    guest = 1
 
-def execute_command(msg, pnum, mako):
+class activation(Enum):
+    active = 0
+    inactive = 1
+    blocked = 2
+
+class contact():
+    def __init__(self, first_name, last_name, pnum, address, clearance):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.phone_number = pnum
+        self.send_address = address
+        self.clearance = clearance
+        self.activation = 1
+
+def new_number(sender, msg, mako):
+    if msg is None or len(msg) < 2:
+        return "Please provide a valid name in the format: First Last"
+    mako.contacts[sender] = contact(msg[0], msg[1], sender[12:23], sender, 1)
+    return "Hello, welcome to Mako. To connect and recieve infomation send Y"
+
+def activate_number(sender, msg, mako):
+    if msg != 'y':
+        return "Please type Y to continue"
+    new_user = mako.contacts[sender]
+    confirmation = f"New user {new_user.first_name} {new_user.last_name} with the address: [{new_user.send_address}] has connected."
+    admin_confirmation(mako, confirmation)
+    mako.contacts[sender].activation = 0
+    return "Welcome to Mako. Type HELP for a list of valid commands."
+    
+
+def execute_command(msg, sender, mako):
     cmd = msg[0]
     cmd = cmd.lower()
     cmd = cmd.split()
     if cmd[0] == "help":
         return "No problem, here's the Help menu:\nRequest\nRemove\nGet"
-    if pnum == mako.admin_pnum:
+    if sender[12:23] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
-        confirmation = guest_commands(cmd, mako)
+        try : #find if phone number exists
+            if mako.contacts[sender].activation < 1:
+                confirmation = guest_commands(cmd, mako)
+            else:
+                confirmation = activate_number(sender, cmd, mako)
+        except:
+            confirmation = new_number(sender, msg, mako)
     return confirmation
 
 def error(cmd, mako):
     return "Arguments missing/unknown command"
+
+def admin_confirmation(mako, msg):
+    mako_smtp.send_response(mako.admin_address, mako, "Spacer", msg)
 
 def admin_add(cmd, mako):
     if cmd is None or len(cmd) < 3:
@@ -40,6 +80,9 @@ def admin_get(cmd, mako):
     if cmd is None or len(cmd) < 2:
         return error(cmd, mako)
     return "Get"
+
+def admin_update(cmd, mako):
+    pass
 
 def admin_commands(cmd, mako):
     print("Admin detected")
@@ -63,7 +106,6 @@ def guest_see(cmd, mako):
 
 def guest_commands(cmd, mako):
     print("Guest detected")
-
     command_dict = {
         "request": guest_request,
         "cancel": guest_cancel,

@@ -5,10 +5,10 @@ from datetime import datetime
 
 # My libraries
 from program_handler import *
-from email_handler import*
+from email_handler import *
 
 class mako_values:
-    def __init__(self, log_imap, log_smtp, pnum, email, app_key, admin_pnum, schedule):
+    def __init__(self, log_imap, log_smtp, pnum, adddress, email, app_key, admin_pnum, schedule):
         self.imap = log_imap
         self.smtp = log_smtp
         self.receiver_pnum = pnum
@@ -16,6 +16,7 @@ class mako_values:
         self.reciever_app_key = app_key
         self.contacts = {}
         self.admin_pnum = admin_pnum
+        self.admin_address = adddress
         self.events = schedule
         self.month = datetime.now().month 
         self.day = datetime.now().day      
@@ -28,14 +29,14 @@ def main():
         msg = poll(mako) #pass credentials to run program if valid
         if msg:
             for sender in msg.keys():
-                command = commands.execute_command(msg[sender], sender[12:23], mako)
+                command = commands.execute_command(msg[sender], sender, mako)
                 print(command)
-                mako_smtp.send_response(mako.reciever_email, sender, mako, "Spacer", command)
+                mako_smtp.send_response(sender, mako, "Spacer", command)
 
 def mako_input_init():
     # Get initial values
     admin_pnum = input("Enter admin phone number: ")
-    #admin_name = input("Enter admin first and last name: ")
+    admin_address = input("Enter admin return address: ")
 
     #get reciever information
     receiver_pnum = input("Enter receiver phone number: ")
@@ -55,7 +56,7 @@ def mako_input_init():
 
     if not imap or not smtp:
         return  
-    return mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum, schedule)
+    return mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum, admin_address, schedule)
 
 def poll(mako):
     mako.imap.select("Inbox")
