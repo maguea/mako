@@ -8,15 +8,15 @@ from program_handler import *
 from email_handler import *
 
 class mako_values:
-    def __init__(self, log_imap, log_smtp, pnum, adddress, email, app_key, admin_pnum, schedule):
+    def __init__(self, log_imap, log_smtp, email, app_key, address, schedule):
         self.imap = log_imap
         self.smtp = log_smtp
-        self.receiver_pnum = pnum
+        self.receiver_pnum = address[:11]
         self.reciever_email = email
         self.reciever_app_key = app_key
         self.contacts = {}
-        self.admin_pnum = admin_pnum
-        self.admin_address = adddress
+        self.admin_pnum = address[12:23]
+        self.admin_address = address
         self.events = schedule
         self.month = datetime.now().month 
         self.day = datetime.now().day      
@@ -35,20 +35,17 @@ def main():
 
 def mako_input_init():
     # Get initial values
-    admin_pnum = input("Enter admin phone number: ")
     admin_address = input("Enter admin return address: ")
-
+    
     #get reciever information
-    receiver_pnum = input("Enter receiver phone number: ")
-    receiver_imap_server = input("Enter receiver IMAP server: ")
-    receiver_smpt_server = input("Enter receiver SMTP server: ")
+    receiver_imap_server = "imap.gmail.com"
+    receiver_smpt_server = "smtp.gmail.com"
     receiver_email = input("Enter receiver email address: ")
     receiver_pass = input("Enter receiver app key: ")
 
     #create event list
     schedule = {}
     schedule[2024] = events.initialize_year(2024)
-    print(schedule[2024][int(1)])
 
     # Login using given credentials
     imap = mako_imap.reciever_check(receiver_imap_server, receiver_email, receiver_pass)
@@ -56,7 +53,7 @@ def mako_input_init():
 
     if not imap or not smtp:
         return  
-    return mako_values(imap, smtp, receiver_pnum, receiver_email, receiver_pass, admin_pnum, admin_address, schedule)
+    return mako_values(imap, smtp, receiver_email, receiver_pass, admin_address, schedule)
 
 def poll(mako):
     mako.imap.select("Inbox")

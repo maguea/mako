@@ -20,18 +20,20 @@ class contact():
         self.clearance = clearance
         self.activation = 1
 
-def new_number(sender, msg, mako):
-    if msg is None or len(msg) < 2:
+def new_number(sender, cmd, mako):
+    print(cmd)
+    if cmd is None or len(cmd) < 2:
         return "Please provide a valid name in the format: First Last"
-    mako.contacts[sender] = contact(msg[0], msg[1], sender[12:23], sender, 1)
+    mako.contacts[sender] = contact(cmd[0], cmd[1], sender[12:23], sender, 1)
     return "Hello, welcome to Mako. To connect and recieve infomation send Y"
 
 def activate_number(sender, msg, mako):
-    if msg != 'y':
+    print(msg[0] == "y")
+    if msg[0] != "y":
         return "Please type Y to continue"
     new_user = mako.contacts[sender]
     confirmation = f"New user {new_user.first_name} {new_user.last_name} with the address: [{new_user.send_address}] has connected."
-    admin_confirmation(mako, confirmation)
+    #admin_confirmation(mako, confirmation)
     mako.contacts[sender].activation = 0
     return "Welcome to Mako. Type HELP for a list of valid commands."
     
@@ -42,7 +44,7 @@ def execute_command(msg, sender, mako):
     cmd = cmd.split()
     if cmd[0] == "help":
         return "No problem, here's the Help menu:\nRequest\nRemove\nGet"
-    if sender[12:23] == mako.admin_pnum:
+    if sender[12:22] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
         try : #find if phone number exists
@@ -51,7 +53,7 @@ def execute_command(msg, sender, mako):
             else:
                 confirmation = activate_number(sender, cmd, mako)
         except:
-            confirmation = new_number(sender, msg, mako)
+            confirmation = new_number(sender, cmd, mako)
     return confirmation
 
 def error(cmd, mako):
