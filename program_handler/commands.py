@@ -33,6 +33,7 @@ def activate_number(sender, msg, mako):
         return "Please type Y to continue"
     new_user = mako.contacts[sender]
     confirmation = f"New user {new_user.first_name} {new_user.last_name} with the address: [{new_user.send_address}] has connected."
+    print(confirmation)
     #admin_confirmation(mako, confirmation)
     mako.contacts[sender].activation = 0
     return "Welcome to Mako. Type HELP for a list of valid commands."
@@ -42,12 +43,12 @@ def execute_command(msg, sender, mako):
     cmd = msg[0]
     cmd = cmd.lower()
     cmd = cmd.split()
-    if cmd[0] == "help":
-        return "No problem, here's the Help menu:\nRequest\nRemove\nGet"
-    if sender[12:22] == mako.admin_pnum:
+    if sender[12:23] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
         try : #find if phone number exists
+            if cmd[0] == "help":
+                return "No problem, here's the Help menu: Request\nRemove\nGet"
             if mako.contacts[sender].activation < 1:
                 confirmation = guest_commands(cmd, mako)
             else:

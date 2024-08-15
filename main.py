@@ -2,6 +2,7 @@
 # Matthew 4:4 "Man shall not live by bread alone, but by every word from God's mouth"
 
 from datetime import datetime
+from time import sleep
 
 # My libraries
 from program_handler import *
@@ -18,19 +19,17 @@ class mako_values:
         self.admin_pnum = address[12:23]
         self.admin_address = address
         self.events = schedule
-        self.month = datetime.now().month 
-        self.day = datetime.now().day      
-        self.year = datetime.now().year
 
 def main():
     mako = mako_input_init()
     t = True
     while(t):
+        morning_call(mako)
         msg = poll(mako) #pass credentials to run program if valid
         if msg:
             for sender in msg.keys():
                 command = commands.execute_command(msg[sender], sender, mako)
-                print(command)
+                print(f"Request from: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nCommand: {command}")
                 mako_smtp.send_response(sender, mako, "Spacer", command)
 
 def mako_input_init():
@@ -67,6 +66,14 @@ def poll(mako):
         for sender in msg.keys():
             msg[sender] = [msg[sender], current_time]
         return msg
+    
+def morning_call(mako):
+    now = datetime.now()
+    current_hour = now.hour
+    current_minutes = now.minute
+    current_seconds = now.second
+    if current_hour == 8 and current_minutes == 00 and current_seconds < 1:
+        commands.admin_confirmation(mako, str(now))
 
 if __name__ == '__main__':
     main()
