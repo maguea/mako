@@ -2,7 +2,6 @@
 # Matthew 4:4 "Man shall not live by bread alone, but by every word from God's mouth"
 
 from datetime import datetime
-from time import sleep
 
 # My libraries
 from program_handler import *
