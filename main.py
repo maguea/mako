@@ -29,7 +29,11 @@ def main():
             for sender in msg.keys():
                 command = commands.execute_command(msg[sender], sender, mako)
                 print(f"Request from: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nCommand: {command}")
-                mako_smtp.send_response(sender, mako, "Spacer", command)
+                if command == "##DEMO":
+                    #mako_smtp.send_demo(sender, mako)
+                    pass
+                else:
+                    mako_smtp.send_response(sender, mako, "Spacer", command)
 
 def mako_input_init():
     # Get initial values

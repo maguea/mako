@@ -24,17 +24,14 @@ def execute_command(msg, sender, mako):
     cmd = msg[0]
     cmd = cmd.lower()
     cmd = cmd.split()
-    #try:
-    #    if mako.contacts[sender].activation == 2:
-    #        return "Please ask admin for server access"
-    #except:
-    #    pass
     if sender[12:22] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
         try : #find if phone number exists
             if cmd[0] == "help":
                 return "No problem, here's the Help menu: Request, Cancel, See"
+            elif cmd[0] == "demo":
+                return "##DEMO"
             command_dict = {
                 0: guest_commands,
                 1: guest_activate,
@@ -43,12 +40,6 @@ def execute_command(msg, sender, mako):
             commend_instructions = cmd if len(cmd) > 1 else None
             command_func = command_dict.get(mako.contacts[sender].activation, error)
             confirmation = command_func(commend_instructions, mako)
-            #rewrite using a dict
-            #if mako.contacts[sender].activation < 1:
-            #    confirmation = guest_commands(cmd, mako)
-            #elif mako.contacts[sender].activation < 2:
-            #    confirmation = guest_activate(sender, cmd, mako)
-            ##TO HERE
         except:
             confirmation = new_number(sender, cmd, mako)
     return confirmation

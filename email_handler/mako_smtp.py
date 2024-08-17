@@ -23,3 +23,6 @@ def send_response(return_address, mako, cmdrsp, msg):
     ssl_context = ssl.create_default_context()
     mako.smtp.sendmail(mako.reciever_email, return_address, rsp.as_string())
     sleep(1)
+
+def send_demo():
+    pass
