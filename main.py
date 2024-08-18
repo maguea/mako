@@ -6,6 +6,7 @@ from datetime import datetime
 # My libraries
 from program_handler import *
 from email_handler import *
+from logged_chats import log
 
 class mako_values:
     def __init__(self, log_imap, log_smtp, email, app_key, address, schedule):
@@ -28,9 +29,11 @@ def main():
         if msg:
             for sender in msg.keys():
                 command = commands.execute_command(msg[sender], sender, mako)
-                print(f"Request from: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nCommand: {command}")
+                history = f"From: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nCommand: {command}\n"
+                log.log_cmd(history)
+                print(history)
                 if command == "##DEMO":
-                    #mako_smtp.send_demo(sender, mako)
+                    mako_smtp.send_image(sender, mako, "Spacer")
                     pass
                 else:
                     mako_smtp.send_response(sender, mako, "Spacer", command)

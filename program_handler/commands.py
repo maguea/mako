@@ -24,29 +24,25 @@ def execute_command(msg, sender, mako):
     cmd = msg[0]
     cmd = cmd.lower()
     cmd = cmd.split()
-    if sender[12:22] == mako.admin_pnum:
+    if cmd[0] == "help":
+        return "No problem, here's the Help menu: Request, Cancel, See"
+    elif cmd[0] == "demo":
+        return "##DEMO"
+    if sender[12:23] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
         try : #find if phone number exists
-            if cmd[0] == "help":
-                return "No problem, here's the Help menu: Request, Cancel, See"
-            elif cmd[0] == "demo":
-                return "##DEMO"
             command_dict = {
                 0: guest_commands,
                 1: guest_activate,
                 2: guest_blocked,
             }
             commend_instructions = cmd if len(cmd) > 1 else None
-            command_func = command_dict.get(mako.contacts[sender].activation, error)
+            command_func = command_dict.get(mako.contacts[sender].activation, guest_blocked)
             confirmation = command_func(commend_instructions, mako)
         except:
             confirmation = new_number(sender, cmd, mako)
     return confirmation
-
-def error(cmd, mako):
-    return "Arguments missing/unknown command"
-
 
 ##########################################################################
 #Admin command below
@@ -55,7 +51,7 @@ def admin_confirmation(mako, msg):
 
 def admin_add(cmd, mako):
     if cmd is None or len(cmd) < 3:
-        return error(cmd, mako)
+        return admin_error(cmd, mako)
     elif mako.month < cmd[0] and (mako.year <= cmd[2] and mako.year % 100 <= cmd[2]):
         return "Invalid date"
     try:
@@ -66,17 +62,17 @@ def admin_add(cmd, mako):
 
 def admin_remove(cmd, mako):
     if cmd is None or len(cmd) < 3:
-        return error(cmd, mako)
+        return admin_error(cmd, mako)
     return "Remove"
 
 def admin_get(cmd, mako):
     if cmd is None or len(cmd) < 2:
-        return error(cmd, mako)
+        return admin_error(cmd, mako)
     return "Get"
 
 def admin_block(cmd, mako):
     if cmd is None or len(cmd) > 1:
-        return error(cmd, mako)
+        return admin_error(cmd, mako)
     try:
         mako.contacts[cmd[0]].activation = 0
         return f"Successfully blocked {cmd[0]}"
@@ -87,15 +83,19 @@ def admin_name(cmd, mako):
     #edit first and last name
     pass
 
+def admin_error(cmd, mako):
+    return "Arguments missing/unknown command"
+
 def admin_commands(cmd, mako):
     command_dict = {
         "add": admin_add,
         "remove": admin_remove,
         "get": admin_get,
-        "block": admin_block
+        "block": admin_block,
+        "name":admin_name
     }
     commend_instructions = cmd[1:] if len(cmd) > 1 else None
-    command_func = command_dict.get(cmd[0], error)
+    command_func = command_dict.get(cmd[0], admin_error)
     return command_func(commend_instructions, mako)
 
 ##################################################################################################
@@ -132,6 +132,9 @@ def guest_cancel(cmd, mako):
 def guest_see(cmd, mako):
     return "see"
 
+def guest_error(cmd, mako):
+    return "Command is unrecognized. Please type HELP for a list of valid commands"
+
 def guest_commands(sender, cmd, mako):
     print("Guest detected")
     command_dict = {
@@ -140,5 +143,5 @@ def guest_commands(sender, cmd, mako):
         "see": guest_see
     }
     commend_instructions = cmd[1:] if len(cmd) > 1 else None
-    command_func = command_dict.get(cmd[0], error)
+    command_func = command_dict.get(cmd[0], guest_error)
     return command_func(commend_instructions, mako)
