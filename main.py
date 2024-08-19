@@ -29,7 +29,7 @@ def main():
         if msg:
             for sender in msg.keys():
                 command = commands.execute_command(msg[sender], sender, mako)
-                history = f"From: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nCommand: {command}\n"
+                history = f"From: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nExecuted: {command}\n"
                 log.log_cmd(history)
                 print(history)
                 if command == "##DEMO":
