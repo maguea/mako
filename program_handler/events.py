@@ -37,6 +37,10 @@ def initialize_year(year):
         year_schedule[month] = month_dict
     return year_schedule
 
+def add_event(cmd, mako):
+    pass
+
 def request_event(event_dict, name, month, day, year, hour, min, duration):
     if hour < 11:
         return "error"
+    

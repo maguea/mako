@@ -12,10 +12,10 @@ class activation(Enum):
     blocked = 2
 
 class contact():
-    def __init__(self, first_name, last_name, pnum, address, clearance):
+    def __init__(self, first_name, last_name, address, clearance):
         self.first_name = first_name
         self.last_name = last_name
-        self.phone_number = pnum
+        self.phone_number = address[12:23]
         self.send_address = address
         self.clearance = clearance
         self.activation = 1
@@ -28,20 +28,27 @@ def execute_command(msg, sender, mako):
         return "No problem, here's the Help menu: Request, Cancel, See"
     elif cmd[0] == "demo":
         return "##DEMO"
-    if sender[12:23] == mako.admin_pnum:
+    if sender[12:22] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
-        try : #find if phone number exists
-            command_dict = {
-                0: guest_commands,
-                1: guest_activate,
-                2: guest_blocked,
-            }
-            commend_instructions = cmd if len(cmd) > 1 else None
-            command_func = command_dict.get(mako.contacts[sender].activation, guest_blocked)
-            confirmation = command_func(commend_instructions, mako)
+        try:
+            if mako.contacts[sender].activation == 2:
+                confirmation = guest_blocked()
+            else:
+                confirmation = "found"
         except:
             confirmation = new_number(sender, cmd, mako)
+        # try : #find if phone number exists
+        #     command_dict = {
+        #         0: guest_commands,
+        #         1: guest_activate,
+        #         2: guest_blocked,
+        #     }
+        #     commend_instructions = cmd if len(cmd) >= 1 else None
+        #     command_func = command_dict.get(mako.contacts[sender].activation, guest_blocked)
+        #     confirmation = command_func(commend_instructions, mako)
+        # except:
+        #     confirmation = new_number(sender, cmd, mako)
     return confirmation
 
 ##########################################################################
@@ -50,7 +57,8 @@ def admin_confirmation(mako, msg):
     mako_smtp.send_response(mako.admin_address, mako, "Spacer", msg)
 
 def admin_add(cmd, mako):
-    if cmd is None or len(cmd) < 3:
+    #FORMAT: MM DD TIME DURATION
+    if cmd is None or len(cmd) < 4:
         return admin_error(cmd, mako)
     elif mako.month < cmd[0] and (mako.year <= cmd[2] and mako.year % 100 <= cmd[2]):
         return "Invalid date"
@@ -105,12 +113,13 @@ def admin_commands(cmd, mako):
 def new_number(sender, cmd, mako):
     if cmd is None or len(cmd) < 2:
         return "Please provide a valid name in the format: First Last"
-    mako.contacts[sender] = contact(cmd[0], cmd[1], sender[12:23], sender, 1)
+    mako.contacts[sender] = contact(cmd[0], cmd[1], sender, 1)
     name = cmd[0][0].upper() + cmd[0][1:]
     return f"Hello {name}, welcome to Mako. To connect and recieve infomation send Y"
 
 #rename as guest
 def guest_activate(sender, cmd, mako):
+    print(cmd)
     if cmd[0] != "y":
         return "Please type Y to continue"
     new_user = mako.contacts[sender]
@@ -120,7 +129,7 @@ def guest_activate(sender, cmd, mako):
     mako.contacts[sender].activation = 0
     return "You are now logged as a contact on Mako. Type HELP for a list of valid commands."
 
-def guest_blocked(sender, cmd, mako):
+def guest_blocked():
     return "Please ask admin for server access"
 
 def guest_request(cmd, mako):
