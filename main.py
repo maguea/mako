@@ -2,6 +2,8 @@
 # Matthew 4:4 "Man shall not live by bread alone, but by every word from God's mouth"
 
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
 # My libraries
 from program_handler import *
@@ -22,8 +24,7 @@ class mako_values:
 
 def main():
     mako = mako_input_init()
-    t = True
-    while(t):
+    while(mako):
         morning_call(mako)
         msg = poll(mako) #pass credentials to run program if valid
         if msg:
@@ -39,14 +40,15 @@ def main():
                     mako_smtp.send_response(sender, mako, "Spacer", command)
 
 def mako_input_init():
+    load_dotenv()
     # Get initial values
-    admin_address = input("Enter admin return address: ")
+    admin_address = os.getenv("ADMIN_ADDRESS")
     
     #get reciever information
     receiver_imap_server = "imap.gmail.com"
     receiver_smpt_server = "smtp.gmail.com"
-    receiver_email = input("Enter receiver email address: ")
-    receiver_pass = input("Enter receiver app key: ")
+    receiver_email = os.getenv("RECEIVER_EMAIL")
+    receiver_pass = os.getenv("RECEIVER_PASS")
 
     #create event list
     schedule = {}

@@ -28,6 +28,7 @@ def get_schedule(event):
     #image.save('C:\Users\alexa\OneDrive\Desktop\vscode\mako\images\newimage.jpg')
 
 def initialize_year(year):
+    #CHANGE THIS TO UTALIZE CSR (if time, use BSR)
     year_schedule = {}
     for month in range(1, 13):
         days_in_month = calendar.monthrange(year, month)[1]

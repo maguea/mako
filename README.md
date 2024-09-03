@@ -1,3 +1,4 @@
-# MAKO alternate calander app by maguea
+## Mako, The SMS Calender Application 
 
-## Schedule assisstant accessible via SMS
+## Description
+This is a calender app designed to remind the user about events through SMS. Simply put, your phone's default SMS app will be used to give commands to the program.
