@@ -41,8 +41,9 @@ def main():
 
 def mako_input_init():
     load_dotenv()
+    
     # Get initial values
-    admin_address = os.getenv("ADMIN_ADDRESS")
+    admin_address = os.getenv("ADMIN_ADDRESS") 
     
     #get reciever information
     receiver_imap_server = "imap.gmail.com"

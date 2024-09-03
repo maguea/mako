@@ -31,24 +31,17 @@ def execute_command(msg, sender, mako):
     if sender[12:22] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
-        # try:
-        #     if mako.contacts[sender].activation == 2:
-        #         confirmation = guest_blocked()
-        #     else:
-        #         confirmation = "found"
-        # except:
-        #     confirmation = new_number(sender, cmd, mako)
         try : #find if phone number exists
             command_dict = {
                 0: guest_commands,
                 1: guest_activate,
                 2: guest_blocked,
             }
+            print(mako.contacts[sender].activation)
+            print(command_dict.get(1))
             commend_instructions = cmd if len(cmd) >= 1 else None
             command_func = command_dict.get(mako.contacts[sender].activation, guest_blocked)
-            print("1")
-            confirmation = command_func(commend_instructions, mako)
-            print("2")
+            confirmation = command_func(sender, commend_instructions, mako) 
         except:
             confirmation = new_number(sender, cmd, mako)
     return confirmation
