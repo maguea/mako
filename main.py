@@ -33,8 +33,8 @@ def main():
                 history = f"From: {sender}\nTime: {msg[sender][1]}\nMessage: {msg[sender][0]}\nExecuted: {command}\n"
                 log.log_cmd(history)
                 print(history)
-                if command == "##DEMO":
-                    mako_smtp.send_image(sender, mako, "Spacer")
+                if command == "##expo":
+                    mako_smtp.send_response(sender, mako, "Spacer", "https://github.com/maguea/mako/blob/main/README.md")
                     pass
                 else:
                     mako_smtp.send_response(sender, mako, "Spacer", command)

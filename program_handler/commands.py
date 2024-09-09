@@ -26,8 +26,8 @@ def execute_command(msg, sender, mako):
     cmd = cmd.split()
     if cmd[0] == "help":
         return "No problem, here's the Help menu: Request, Cancel, See"
-    elif cmd[0] == "demo":
-        return "##DEMO"
+    elif cmd[0] == "expo":
+        return "##expo"
     if sender[12:23] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
