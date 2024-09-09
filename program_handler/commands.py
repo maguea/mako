@@ -28,7 +28,7 @@ def execute_command(msg, sender, mako):
         return "No problem, here's the Help menu: Request, Cancel, See"
     elif cmd[0] == "demo":
         return "##DEMO"
-    if sender[12:22] == mako.admin_pnum:
+    if sender[12:23] == mako.admin_pnum:
         confirmation = admin_commands(cmd, mako)
     else:
         try : #find if phone number exists
@@ -37,8 +37,6 @@ def execute_command(msg, sender, mako):
                 1: guest_activate,
                 2: guest_blocked,
             }
-            print(mako.contacts[sender].activation)
-            print(command_dict.get(1))
             commend_instructions = cmd if len(cmd) >= 1 else None
             command_func = command_dict.get(mako.contacts[sender].activation, guest_blocked)
             confirmation = command_func(sender, commend_instructions, mako) 
@@ -114,7 +112,6 @@ def new_number(sender, cmd, mako):
 
 #rename as guest
 def guest_activate(sender, cmd, mako):
-    print(cmd)
     if cmd[0] != "y":
         return "Please type Y to continue"
     new_user = mako.contacts[sender]

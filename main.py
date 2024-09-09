@@ -63,6 +63,7 @@ def mako_input_init():
         return  
     return mako_values(imap, smtp, receiver_email, receiver_pass, admin_address, schedule)
 
+#Checks for new messages
 def poll(mako):
     mako.imap.select("Inbox")
     _, msgnums = mako.imap.search(None, "ALL")
